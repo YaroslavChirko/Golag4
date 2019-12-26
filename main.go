@@ -30,6 +30,7 @@ func parse(word string) engine.Command{
 func main(){
 eventLoop := new(engine.EventLoop)
 eventLoop.IsFull = false
+eventLoop.WaitNx = make(chan string)
 go eventLoop.Start()
 
 if input, err := os.Open("nw1.txt"); err == nil {
@@ -40,9 +41,11 @@ if input, err := os.Open("nw1.txt"); err == nil {
  cmd := parse(commandLine)
  if cmd!=nil{
  	eventLoop.Post(cmd)
+ 	eventLoop.WaitNx<-"go rout"
  	}
  }
 eventLoop.IsFull = true
+close(eventLoop.WaitNx)
 }
 eventLoop.AwaitFinish()
 }

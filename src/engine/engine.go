@@ -14,14 +14,16 @@ type Handler interface {
 type EventLoop struct{
 	mqArr []Command
 	IsFull bool 
+	WaitNx chan string
 }
 
 func (hand *EventLoop) Start() {
 	hand.mqArr = make([]Command,0)
+	
 	for {
-		if len(hand.mqArr)>0{
+		<-hand.WaitNx
 		hand.Pop()
-		}else if(len(hand.mqArr)<1&& hand.IsFull == true){
+		if(len(hand.mqArr)<1&& hand.IsFull == true){
 			break
 		}
 	}
